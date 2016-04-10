@@ -59,7 +59,7 @@ class ProcessGroupProcess(process.Process, object):
                 if e.errno == errno.EPERM:
                     self.proto.leftoverProcesses(False)
                 elif e.errno != errno.ESRCH:
-                    log.error("pgid: {} e:{}".format(pgid, e))
+                    log.error("pgid: {0} e:{1}".format(pgid, e))
                     raise
             else:
                 self.proto.leftoverProcesses(True)

@@ -31,7 +31,7 @@ class Resp404(Resource):
     def render_GET(self, request):
         request.setResponseCode(404)
         msg = {'error':
-               "The desired url {} was not found".format(request.uri)}
+               "The desired url {0} was not found".format(request.uri)}
         if wantJson(request):
             return json.dumps(msg)
         else:
@@ -134,7 +134,7 @@ class PoolServers(Resource):
         else:
             res = ""
             for hostname, server in self.coordinator.servers.items():
-                res += "{}:\t{}\n".format(hostname, server.textStatus())
+                res += "{0}:\t{1}\n".format(hostname, server.textStatus())
             return res
 
 
