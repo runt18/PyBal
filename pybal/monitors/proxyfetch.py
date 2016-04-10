@@ -50,8 +50,10 @@ class ProxyFetchMonitoringProtocol(monitor.MonitoringProtocol):
     from twisted.web import error as weberror
     catchList = ( defer.TimeoutError, weberror.Error, error.ConnectError, error.DNSLookupError )
 
-    def __init__(self, coordinator, server, configuration={}):
+    def __init__(self, coordinator, server, configuration=None):
         """Constructor"""
+        if configuration is None:
+            configuration = {}
 
         # Call ancestor constructor
         super(ProxyFetchMonitoringProtocol, self).__init__(coordinator, server, configuration)

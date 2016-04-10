@@ -89,8 +89,10 @@ class RunCommandMonitoringProtocol(monitor.MonitoringProtocol):
 
     TIMEOUT_RUN = 20
 
-    def __init__(self, coordinator, server, configuration={}):
+    def __init__(self, coordinator, server, configuration=None):
         """Constructor"""
+        if configuration is None:
+            configuration = {}
 
         # Call ancestor constructor
         super(RunCommandMonitoringProtocol, self).__init__(coordinator, server, configuration)
@@ -182,7 +184,7 @@ class RunCommandMonitoringProtocol(monitor.MonitoringProtocol):
                     level=logging.WARN)
 
     def _spawnProcess(self, processProtocol, executable, args=(),
-                     env={}, path=None,
+                     env=None, path=None,
                      uid=None, gid=None, childFDs=None,
                      sessionLeader=False, timeout=None):
         """
@@ -190,6 +192,8 @@ class RunCommandMonitoringProtocol(monitor.MonitoringProtocol):
         process group / session and timeout support, and support for
         non-POSIX platforms and PTYs removed.
         """
+        if env is None:
+            env = {}
 
         args, env = reactor._checkProcessArgs(args, env)
         return ProcessGroupProcess(reactor, executable, args, env, path,

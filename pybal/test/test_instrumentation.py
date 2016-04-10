@@ -167,7 +167,9 @@ class SiteTest(WebBaseTestCase):
         self.tr = proto_helpers.StringTransport()
         self.proto.makeConnection(self.tr)
 
-    def _httpReq(self, uri='/', host='localhost', headers={}):
+    def _httpReq(self, uri='/', host='localhost', headers=None):
+        if headers is None:
+            headers = {}
         data = "GET {} HTTP/1.1\r\n".format(uri)
         data +="Host: {}\r\n".format(host)
         for k, hdr in headers.items():
