@@ -227,7 +227,7 @@ class Server:
         return reduce(lambda b,monitor: b or monitor.up, self.monitors, len(self.monitors) == 0)
 
     def textStatus(self):
-        return "%s/%s/%s" % (self.enabled and "enabled" or "disabled",
+        return "{0!s}/{1!s}/{2!s}".format(self.enabled and "enabled" or "disabled",
                              self.up and "up" or (self.calcPartialStatus() and "partially up" or "down"),
                              self.pooled and "pooled" or "not pooled")
 
@@ -295,7 +295,7 @@ class Coordinator:
         self.configObserver.startObserving()
 
     def __str__(self):
-        return "[%s]" % self.lvsservice.name
+        return "[{0!s}]".format(self.lvsservice.name)
 
     def assignServers(self):
         """

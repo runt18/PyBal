@@ -153,8 +153,8 @@ class LVSServiceTestCase(PyBalTestCase):
         lvs_service.assignServers(new_servers)
         self.assertEquals(
             sorted(lvs_service.ipvsManager.cmdList),
-            ['-a -t 127.0.0.1:80 -r %s' % s for s in 'cde'] +
-            ['-d -t 127.0.0.1:80 -r %s' % s for s in 'abc']
+            ['-a -t 127.0.0.1:80 -r {0!s}'.format(s) for s in 'cde'] +
+            ['-d -t 127.0.0.1:80 -r {0!s}'.format(s) for s in 'abc']
         )
 
     def testAddServer(self):

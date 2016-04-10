@@ -115,7 +115,7 @@ class ProxyFetchMonitoringProtocol(monitor.MonitoringProtocol):
     def _fetchSuccessful(self, result):
         """Called when getProxyPage is finished successfully."""
 
-        self.report('Fetch successful, %.3f s' % (seconds() - self.checkStartTime))
+        self.report('Fetch successful, {0:.3f} s'.format((seconds() - self.checkStartTime)))
         self._resultUp()
 
         return result
@@ -127,7 +127,7 @@ class ProxyFetchMonitoringProtocol(monitor.MonitoringProtocol):
         if failure.check(defer.CancelledError):
             return None
 
-        self.report('Fetch failed, %.3f s' % (seconds() - self.checkStartTime),
+        self.report('Fetch failed, {0:.3f} s'.format((seconds() - self.checkStartTime)),
                     level=logging.WARN)
 
         self._resultDown(failure.getErrorMessage())

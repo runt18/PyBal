@@ -55,10 +55,10 @@ class IPVSManager(object):
 
         if ':' in service[1]:
             # IPv6 address
-            service = ' [%s]:%d' % service[1:3]
+            service = ' [{0!s}]:{1:d}'.format(*service[1:3])
         else:
             # IPv4
-            service = ' %s:%d' % service[1:3]
+            service = ' {0!s}:{1:d}'.format(*service[1:3])
 
         return protocol + service
 
@@ -72,7 +72,7 @@ class IPVSManager(object):
             server:    PyBal server object
         """
 
-        return '-r %s' % (server.ip or server.host)
+        return '-r {0!s}'.format((server.ip or server.host))
 
     @staticmethod
     def commandClearServiceTable():
@@ -127,7 +127,7 @@ class IPVSManager(object):
 
         # Include weight if specified
         if server.weight:
-            cmd += ' -w %d' % server.weight
+            cmd += ' -w {0:d}'.format(server.weight)
 
         return cmd
 
@@ -146,7 +146,7 @@ class IPVSManager(object):
 
         # Include weight if specified
         if server.weight:
-            cmd += ' -w %d' % server.weight
+            cmd += ' -w {0:d}'.format(server.weight)
 
         return cmd
 

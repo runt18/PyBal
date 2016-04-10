@@ -66,28 +66,28 @@ class MonitoringProtocol(object):
 
     def report(self, text, level=logging.DEBUG):
         """Common method for reporting/logging check results."""
-        msg = "%s (%s): %s" % (
+        msg = "{0!s} ({1!s}): {2!s}".format(
             self.server.host,
             self.server.textStatus(),
             text
         )
-        s = "%s %s" % (self.server.lvsservice.name, self.__name__)
+        s = "{0!s} {1!s}".format(self.server.lvsservice.name, self.__name__)
         _log(msg, level, s)
 
     def _getConfigBool(self, optionname, default=None):
         return self.configuration.getboolean(
-            '%s.%s' % (self.__name__.lower(), optionname), default)
+            '{0!s}.{1!s}'.format(self.__name__.lower(), optionname), default)
 
     def _getConfigInt(self, optionname, default=None):
         return self.configuration.getint(
-            '%s.%s' % (self.__name__.lower(), optionname), default)
+            '{0!s}.{1!s}'.format(self.__name__.lower(), optionname), default)
 
     def _getConfigString(self, optionname):
         val = self.configuration[self.__name__.lower() + '.' + optionname]
         if type(val) == str:
             return val
         else:
-            raise ValueError("Value of %s is not a string" % optionname)
+            raise ValueError("Value of {0!s} is not a string".format(optionname))
 
     def _getConfigStringList(self, optionname, locals=None, globals=None):
         """Takes a (string) value, eval()s it and checks whether it
@@ -103,5 +103,5 @@ class MonitoringProtocol(object):
             # empty.
             return val
         else:
-            raise ValueError("Value of %s is not a string or stringlist" %
-                             optionname)
+            raise ValueError("Value of {0!s} is not a string or stringlist".format(
+                             optionname))

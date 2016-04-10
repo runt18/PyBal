@@ -31,13 +31,13 @@ class WebBaseTestCase(PyBalTestCase):
         self.coordinators = []
         for i in xrange(3):
             lvsservice = mock.MagicMock()
-            lvsservice.name = 'test_pool%d' % i
+            lvsservice.name = 'test_pool{0:d}'.format(i)
             coord = mock.MagicMock()
             coord.servers = {}
             coord.lvsservice = lvsservice
             for j in xrange(1, 11):
-                host = "mw10%02d" % j
-                ip = '192.168.10.%d' % j
+                host = "mw10{0:02d}".format(j)
+                ip = '192.168.10.{0:d}'.format(j)
                 port = 80
                 weight = 10
                 s = ServerStub(host, ip=ip, port=port, weight=weight,

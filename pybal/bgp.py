@@ -221,7 +221,7 @@ class IPPrefix(object):
                         self.prefix += struct.pack('!H', int(hexstr, 16))
                     else:
                         zeroCount = 8 - len(hexlist) + 1
-                        self.prefix += struct.pack('!%dH' % zeroCount, *((0,) * zeroCount))  
+                        self.prefix += struct.pack('!{0:d}H'.format(zeroCount), *((0,) * zeroCount))  
                 
             self.prefixlen = int(prefixlen)
         else:
@@ -232,9 +232,9 @@ class IPPrefix(object):
     
     def __str__(self):
         if self.addressfamily == AFI_INET:
-            return '.'.join([str(ord(o)) for o in self.packed(pad=True)]) + '/%d' % self.prefixlen
+            return '.'.join([str(ord(o)) for o in self.packed(pad=True)]) + '/{0:d}'.format(self.prefixlen)
         elif self.addressfamily == AFI_INET6:
-            return ':'.join([hex(o)[2:] for o in struct.unpack('!8H', self.packed(pad=True))]) + '/%d' % self.prefixlen       
+            return ':'.join([hex(o)[2:] for o in struct.unpack('!8H', self.packed(pad=True))]) + '/{0:d}'.format(self.prefixlen)       
     
     def __eq__(self, other):
         # FIXME: masked ips
@@ -468,7 +468,7 @@ class BaseASPathAttribute(Attribute):
             # Loop over all path segments
             while len(postfix) > 0:
                 segType, length = struct.unpack('!BB', postfix[:2])
-                asPath = list(struct.unpack('!%dH' % length, postfix[2:2+length*2]))
+                asPath = list(struct.unpack('!{0:d}H'.format(length), postfix[2:2+length*2]))
                 
                 postfix = postfix[2+length*2:]
                 self.value.append( (segType, asPath) )
@@ -476,7 +476,7 @@ class BaseASPathAttribute(Attribute):
             raise AttributeException(ERR_MSG_UPDATE_MALFORMED_ASPATH)
     
     def encode(self):
-        packedPath = "".join([struct.pack('!BB%dH' % len(asPath), segType, len(asPath), *asPath) for segType, asPath in self.value])
+        packedPath = "".join([struct.pack('!BB{0:d}H'.format(len(asPath)), segType, len(asPath), *asPath) for segType, asPath in self.value])
         return struct.pack('!BBB', self.flags(), self.typeCode, len(packedPath)) + packedPath
 
     def __str__(self):
@@ -649,13 +649,13 @@ class BaseCommunityAttribute(Attribute):
             raise AttributeException(ERR_MSG_UPDATE_ATTR_LEN, attrTuple)
         
         length = len(value) / 4
-        self.value = list(struct.unpack('!%dI' % length, value))
+        self.value = list(struct.unpack('!{0:d}I'.format(length), value))
     
     def encode(self):
-        return struct.pack('!BBB%dI' % len(self.value), self.flags(), self.typeCode, len(self.value) * 4, *self.value)
+        return struct.pack('!BBB{0:d}I'.format(len(self.value)), self.flags(), self.typeCode, len(self.value) * 4, *self.value)
     
     def __str__(self):
-        return str(["%d:%d" % (c / 2**16, c % 2**16) for c in self.value])
+        return str(["{0:d}:{1:d}".format(c / 2**16, c % 2**16) for c in self.value])
     
     def __hash__(self):
         return hash(tuple(self.value))
@@ -705,7 +705,7 @@ class BaseMPAttribute(Attribute):
             }[safi])
     
     def __str__(self):
-        return "%s %s NLRI %s" % (BaseMPAttribute.afiStr(self.afi, self.safi) + (self.value[2], ))
+        return "{0!s} {1!s} NLRI {2!s}".format(*(BaseMPAttribute.afiStr(self.afi, self.safi) + (self.value[2], )))
 
 class MPReachNLRIAttribute(BaseMPAttribute):
     name = 'MP Reach NLRI'
@@ -728,7 +728,7 @@ class MPReachNLRIAttribute(BaseMPAttribute):
         value = attrTuple[2]
         try:
             nhlen = struct.unpack('!B', value[3])[0]
-            pnh = struct.unpack('!%ds' % nhlen, value[4:4+nhlen])[0]
+            pnh = struct.unpack('!{0:d}s'.format(nhlen), value[4:4+nhlen])[0]
         except struct.error:
             raise AttributeException(ERR_MSG_UPDATE_OPTIONAL_ATTR, attrTuple)
         
@@ -747,10 +747,10 @@ class MPReachNLRIAttribute(BaseMPAttribute):
         encodedNLRI = BGP.encodePrefixes(nlri)
         length = 5 + len(pnh) + len(encodedNLRI)
 
-        return struct.pack('!BBHHBB%dsB' % len(pnh), self.flags(), self.typeCode, length, afi, safi, len(pnh), pnh, 0) + encodedNLRI
+        return struct.pack('!BBHHBB{0:d}sB'.format(len(pnh)), self.flags(), self.typeCode, length, afi, safi, len(pnh), pnh, 0) + encodedNLRI
 
     def __str__(self):
-        return "%s %s NH %s NLRI %s" % (BaseMPAttribute.afiStr(self.afi, self.safi) + self.value[2:4])
+        return "{0!s} {1!s} NH {2!s} NLRI {3!s}".format(*(BaseMPAttribute.afiStr(self.afi, self.safi) + self.value[2:4]))
     
     def __hash__(self):
         return hash((self.value[0:3] + (frozenset(self.value[3]), )))
@@ -869,7 +869,7 @@ class AttributeDict(dict):
     add = _add
     
     def __str__(self):
-        return "{%s}" % ", ".join(["%s: %s" % (attrType.__name__, str(attr)) for attrType, attr in self.iteritems()])
+        return "{{{0!s}}}".format(", ".join(["{0!s}: {1!s}".format(attrType.__name__, str(attr)) for attrType, attr in self.iteritems()]))
     
 class FrozenAttributeDict(AttributeDict):
     __delitem__ = None
@@ -2159,7 +2159,7 @@ class BGPPeering(BGPFactory):
         
         for afi, safi in list(addressFamilies):
             if afi not in SUPPORTED_AFI or safi not in SUPPORTED_SAFI:
-                raise ValueError("Address family (%d, %d) not supported" % (afi, safi))
+                raise ValueError("Address family ({0:d}, {1:d}) not supported".format(afi, safi))
         
         self.addressFamilies = addressFamilies
 

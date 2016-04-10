@@ -110,7 +110,7 @@ class Logger(object):
         def _log(msg, **kwargs):
             level = Logger._to_str(lvl)
             sys = kwargs.get('system', 'pybal')
-            message = "%s: %s" % (level, msg)
+            message = "{0!s}: {1!s}".format(level, msg)
             tw_log.msg(message, logLevel=lvl, system=sys)
         return _log
 

@@ -82,8 +82,7 @@ class EtcdClient(HTTPClient):
 
     def timeout(self):
         err = defer.TimeoutError(
-            'Retrieving key %s from %s took longer than %s seconds.' %
-            (self.factory.key, self.factory.host, self.factory.timeout))
+            'Retrieving key {0!s} from {1!s} took longer than {2!s} seconds.'.format(self.factory.key, self.factory.host, self.factory.timeout))
         self.factory.onFailure(err)
         self.transport.loseConnection()
 
@@ -118,12 +117,12 @@ class EtcdConfigurationObserver(ConfigurationObserver, HTTPClientFactory):
         return parsed.hostname, parsed.port or 2379, parsed.path
 
     def getPath(self):
-        path = '/v2/keys/%s' % self.key.lstrip('/')
+        path = '/v2/keys/{0!s}'.format(self.key.lstrip('/'))
         params = {'recursive': 'true'}
         if self.waitIndex is not None:
             params['waitIndex'] = self.waitIndex
             params['wait'] = 'true'
-        path = '%s?%s' % (path, urllib.urlencode(params))
+        path = '{0!s}?{1!s}'.format(path, urllib.urlencode(params))
         return path
 
     def clientConnectionFailed(self, connector, reason):
@@ -163,4 +162,4 @@ class EtcdConfigurationObserver(ConfigurationObserver, HTTPClientFactory):
             self.lastConfig = config
 
     def onFailure(self, reason):
-        log.error('failed: %s' % reason)
+        log.error('failed: {0!s}'.format(reason))
