@@ -127,7 +127,7 @@ class Server:
 
         addr = " ".join(
             list(self.ip4_addresses) + list(self.ip6_addresses))
-        msg = "Resolved {} to addresses {}".format(self.host, addr)
+        msg = "Resolved {0} to addresses {1}".format(self.host, addr)
         log.debug(msg)
 
         ip_addresses = {
@@ -178,7 +178,7 @@ class Server:
         """
         Called when initialization failed
         """
-        log.error("Initialization failed for server {}".format(self.host))
+        log.error("Initialization failed for server {0}".format(self.host))
 
         assert self.ready == False
         self.maintainState()
@@ -194,7 +194,7 @@ class Server:
             monitorlist = eval(lvsservice.configuration['monitors'])
         except KeyError:
             log.critical(
-                "LVS service {} does not have a 'monitors' configuration option set.".format(
+                "LVS service {0} does not have a 'monitors' configuration option set.".format(
                     lvsservice.name)
             )
             raise
@@ -207,7 +207,7 @@ class Server:
                 try:
                     monitormodule = getattr(__import__('pybal.monitors', fromlist=[monitorname.lower()], level=0), monitorname.lower())
                 except AttributeError:
-                    log.err("Monitor {} does not exist".format(monitorname))
+                    log.err("Monitor {0} does not exist".format(monitorname))
                 else:
                     monitorclass = getattr(monitormodule, monitorname + 'MonitoringProtocol')
                     monitor = monitorclass(coordinator, self, lvsservice.configuration)
@@ -346,7 +346,7 @@ class Coordinator:
         server = monitor.server
 
         if not server.up and server.calcStatus():
-            log.info("Server {} ({}) is up".format(server.host,
+            log.info("Server {0} ({1}) is up".format(server.host,
                                                    server.textStatus()),
                      system=self.lvsservice.name)
             server.up = True
@@ -430,7 +430,7 @@ class Coordinator:
 
         # Remove old servers
         for hostName, server in delServers.iteritems():
-            log.info("{} Removing server {} (no longer found in new configuration)".format(self, hostName))
+            log.info("{0} Removing server {1} (no longer found in new configuration)".format(self, hostName))
             server.destroy()
             del self.servers[hostName]
 
@@ -443,7 +443,7 @@ class Coordinator:
     def _serverInitDone(self, result):
         """Called when all (new) servers have finished initializing"""
 
-        log.info("{} Initialization complete".format(self))
+        log.info("{0} Initialization complete".format(self))
 
         # Assign the updated list of enabled servers to the LVSService instance
         self.assignServers()
@@ -507,7 +507,7 @@ class BGPFailover:
                 pass
 
     def closeSession(self, peering):
-        log.info("Clearing session to {}".format(peering.peerAddr))
+        log.info("Clearing session to {0}".format(peering.peerAddr))
         # Withdraw all announcements
         peering.setAdvertisements(set())
         return peering.manualStop()
@@ -604,7 +604,7 @@ def main():
                 services[section] = ipvs.LVSService(section, cfgtuple, configuration=configdict)
                 crd = Coordinator(services[section],
                     configUrl=config.get(section, 'config'))
-                log.info("Created LVS service '{}'".format(section))
+                log.info("Created LVS service '{0}'".format(section))
                 instrumentation.PoolsRoot.addPool(crd.lvsservice.name, crd)
 
         # Set up BGP

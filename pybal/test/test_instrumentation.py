@@ -168,10 +168,10 @@ class SiteTest(WebBaseTestCase):
         self.proto.makeConnection(self.tr)
 
     def _httpReq(self, uri='/', host='localhost', headers={}):
-        data = "GET {} HTTP/1.1\r\n".format(uri)
-        data +="Host: {}\r\n".format(host)
+        data = "GET {0} HTTP/1.1\r\n".format(uri)
+        data +="Host: {0}\r\n".format(host)
         for k, hdr in headers.items():
-            data += "{}: {}".format(k, hdr)
+            data += "{0}: {1}".format(k, hdr)
         data += "\r\n\r\n"
         self.proto.dataReceived(data)
         hdrs, body = self.tr.value().split("\r\n\r\n")
