@@ -31,7 +31,7 @@ class ConfigurationObserver(object):
         for subclass in get_subclasses(cls):
             if configUrl.startswith(subclass.urlScheme):
                 return subclass(coordinator, configUrl)
-        raise PyBalConfigurationError('No handler for URL "%s"' % configUrl)
+        raise PyBalConfigurationError('No handler for URL "{0!s}"'.format(configUrl))
 
 
 class FileConfigurationObserver(ConfigurationObserver):
@@ -103,7 +103,7 @@ class FileConfigurationObserver(ConfigurationObserver):
                 # We catch exceptions here (rather than simply allow them to
                 # bubble up to FileConfigurationObserver.logError) because we
                 # want to try and parse as much of the file as we can.
-                log.err(ex, 'Bad configuration line: %s' % line)
+                log.err(ex, 'Bad configuration line: {0!s}'.format(line))
                 continue
         return config
 

@@ -63,13 +63,13 @@ class Alerts(Resource):
             total = len(crd.servers)
             if pooledDown:
                 slist = ", ".join([s.host for s in crd.pooledDownServers])
-                critPools[pool] = "Servers %s are marked down but pooled" % slist
+                critPools[pool] = "Servers {0!s} are marked down but pooled".format(slist)
             elif total < (total * crd.lvsservice.getDepoolThreshold() + 1):
                 resp['status'] = 'warning'
-                resp['msg'] += "Pool %s is too small to allow depooling. " % crd.lvsservice.name
+                resp['msg'] += "Pool {0!s} is too small to allow depooling. ".format(crd.lvsservice.name)
         if critPools != {}:
             resp['status'] = 'critical'
-            resp['msg'] = "; ".join(["%s: %s" % (k, v)
+            resp['msg'] = "; ".join(["{0!s}: {1!s}".format(k, v)
                                     for k, v in critPools.items()])
 
         if resp['status'] == 'ok':
@@ -77,7 +77,7 @@ class Alerts(Resource):
         if wantJson(request):
             return json.dumps(resp)
         else:
-            return "%s - %s" % (resp['status'].upper(), resp['msg'])
+            return "{0!s} - {1!s}".format(resp['status'].upper(), resp['msg'])
 
 class PoolsRoot(Resource):
     """Pools base resource.

@@ -92,11 +92,11 @@ class DNSQueryMonitoringProtocol(monitor.MonitoringProtocol):
             addresses = " ".join([socket.inet_ntop(addressFamily, r.payload.address)
                                   for r in answers
                                   if r.type == query.type])
-            resultStr = "%s %s %s" % (query.name, dns.QUERY_TYPES[query.type], addresses)
+            resultStr = "{0!s} {1!s} {2!s}".format(query.name, dns.QUERY_TYPES[query.type], addresses)
         else:
             resultStr = None
 
-        self.report('DNS query successful, %.3f s' % (runtime.seconds() - self.checkStartTime)
+        self.report('DNS query successful, {0:.3f} s'.format((runtime.seconds() - self.checkStartTime))
                     + (resultStr and (': ' + resultStr) or ""))
         self._resultUp()
 
@@ -105,7 +105,7 @@ class DNSQueryMonitoringProtocol(monitor.MonitoringProtocol):
     def _queryFailed(self, failure, query):
         """Called when the DNS query finished with a failure."""
 
-        queryStr = ", query: %s %s" % (query.name, dns.QUERY_TYPES[query.type])
+        queryStr = ", query: {0!s} {1!s}".format(query.name, dns.QUERY_TYPES[query.type])
 
         # Don't act as if the check failed if we cancelled it
         if failure.check(defer.CancelledError):
@@ -115,7 +115,7 @@ class DNSQueryMonitoringProtocol(monitor.MonitoringProtocol):
         elif failure.check(error.DNSServerError):
             errorStr = "DNS server error" + queryStr
         elif failure.check(error.DNSNameError):
-            errorStr = "%s NXDOMAIN" % query.name
+            errorStr = "{0!s} NXDOMAIN".format(query.name)
             if not self.failOnNXDOMAIN:
                 self.report(errorStr, level=logging.INFO)
                 self._resultUp()
@@ -126,7 +126,7 @@ class DNSQueryMonitoringProtocol(monitor.MonitoringProtocol):
             errorStr = str(failure)
 
         self.report(
-            'DNS query failed, %.3f s' % (runtime.seconds() - self.checkStartTime),
+            'DNS query failed, {0:.3f} s'.format((runtime.seconds() - self.checkStartTime)),
             level=logging.ERROR
         )
 
