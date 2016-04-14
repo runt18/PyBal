@@ -17,8 +17,10 @@ class MonitoringProtocol(object):
     abstract methods, and some commonly useful functions.
     """
 
-    def __init__(self, coordinator, server, configuration={}, reactor=reactor):
+    def __init__(self, coordinator, server, configuration=None, reactor=reactor):
         """Constructor"""
+        if configuration is None:
+            configuration = {}
 
         self.coordinator = coordinator
         self.server = server
